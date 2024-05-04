@@ -1,56 +1,56 @@
-const voicesDropdown = document.querySelector("#voices");
+const voiceDropdown = document.querySelector("#voices");
 const rateInput = document.querySelector("#rate");
 const pitchInput = document.querySelector("#pitch");
 const textarea = document.querySelector("#textarea");
 const stopButton = document.querySelector("#stop-button");
 const speakButton = document.querySelector("#speak-button");
 
-
-const message = new SpeechSynthesisUtterance("Welcome!");
+const message = new SpeechSynthesisUtterance(textarea.value);
 let voices = [];
 
-function populateVoices(){
-    
+function populateVoices() {
+    voices = speechSynthesis.getVoices();
+
+    for(let index = 0; index < voices.length; index++) {
         const option = document.createElement("option");
-        option.setAttribute("value", voices[index].name);
+        option.setAttribute("value", index);
         option.textContent = voices[index].name;
-    
-    voicesDropdown.appendChild(option);
-}
 
-function setVoice(){
-    for(let index = 0; index < voices.length; index++){
-        if(voicesDropdown.value === voices[index].name){
-            message.voice = voices[index];
-        }
+        voiceDropdown.appendChild(option);
     }
+
+    setVoice();
 }
 
-function setRate(){
-    message.rate = rateInput.value;
+function setVoice() {
+    const selectedVoiceIndex = voiceDropdown.value;
+    message.voice = voices[selectedVoiceIndex];
 }
 
-function setPitch(){
-    message.pitch = pitchInput.value;
+function setRate() {
+  message.rate = rateInput.value;
 }
 
-function setText(){
-    message.text = textarea.value;
+function setPitch() {
+  message.pitch = pitchInput.value;
 }
 
-function stopVoice(){
+function setText() {
+  message.text = textarea.value;
+}
+
+function stopSpeak() {
     speechSynthesis.cancel();
 }
 
-function speakVoice(){
-    speechSynthesis.speak(message);
+function speakVoices() {
+  speechSynthesis.speak(message);
 }
 
-
 speechSynthesis.addEventListener("voiceschanged", populateVoices);
-voicesDropdown.addEventListener("change", setVoice)
-rateInput.addEventListener("change", setRate);
-pitchInput.addEventListener("change", setPitch);
-textarea.addEventListener("change", setText);
-stopButton.addEventListener("click", stopVoice);
-speakButton.addEventListener("click", speakVoice);
+rateInput.addEventListener("input", setRate);
+pitchInput.addEventListener("input", setPitch);
+textarea.addEventListener("input", setText);
+voiceDropdown.addEventListener("change", setVoice);
+stopButton.addEventListener("click", stopSpeak);
+speakButton.addEventListener("click", speakVoices);
